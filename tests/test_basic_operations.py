@@ -23,3 +23,12 @@ def test_minus(vector_v, vector_w):
 
 def test_times_scalar(vector_v):
     assert vector_v.times_scalar(2.0) == Vector([16.444, -18.444])
+
+
+def test_constructor_fails():
+    with pytest.raises(ValueError):
+        Vector([])
+    with pytest.raises(TypeError):
+        Vector()
+    with pytest.raises(TypeError):
+        Vector(2.8)
