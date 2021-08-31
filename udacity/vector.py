@@ -1,3 +1,6 @@
+import math
+
+
 class Vector(object):
     def __init__(self, coordinates) -> None:
         try:
@@ -32,3 +35,15 @@ class Vector(object):
     def times_scalar(self, c: float) -> object:
         new_coordinates = [round(x * c, 3) for x in self.coordinates]
         return Vector(new_coordinates)
+
+    def magnitude(self) -> float:
+        squares = [x ** 2 for x in self.coordinates]
+        return round(math.sqrt(sum(squares)), 3)
+
+    def normalize(self) -> object:
+        try:
+            magnitude = self.magnitude()
+            return self.times_scalar(1.0 / magnitude)
+
+        except ZeroDivisionError:
+            raise ZeroDivisionError("Cannot normalize the zero vector")
