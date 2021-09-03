@@ -59,7 +59,14 @@ class Vector(object):
         try:
             v1 = self.normalize()
             w1 = o.normalize()
-            angle = math.acos(v1.dot(w1))
+            # To avoid float decimal problems we need to manually trunc since round
+            # function changes the value and we loose precision.
+            dot = v1.dot(w1)
+            if dot > 1.000:
+                dot = 1.000
+            elif dot < -1.000:
+                dot = -1.000
+            angle = math.acos(dot)
             if in_degrees:
                 angle = angle * (180.0 / math.pi)
             return round(angle, 3)
@@ -69,3 +76,17 @@ class Vector(object):
                 raise Exception("Cannot compute an angle with the zero vector")
             else:
                 raise e
+
+    def is_orthogonal_to(self, o: object, tolerance=1e-3) -> bool:
+        return abs(self.dot(o)) < tolerance
+
+    def is_parallel_to(self, o: object, tolerance=1e-3) -> bool:
+        return (
+            self.is_zero()
+            or o.is_zero()
+            or (math.isclose(self.angle(o), 0.0, rel_tol=tolerance))
+            or (math.isclose(self.angle(o), math.pi, rel_tol=tolerance))
+        )
+
+    def is_zero(self) -> bool:
+        return self.magnitude() == 0.0

@@ -74,3 +74,25 @@ def test_angle():
     with pytest.raises(Exception):
         zero_v = Vector([0.0, 0.0, 0.0])
         v.angle(zero_v)
+
+
+def test_is_parallel_orthogonal():
+    v = Vector([-7.579, -7.880])
+    w = Vector([22.737, 23.640])
+    assert v.is_parallel_to(w)
+    assert not v.is_orthogonal_to(w)
+
+    v = Vector([-2.029, 9.970, 4.172])
+    w = Vector([-9.231, -6.639, -7.245])
+    assert not v.is_parallel_to(w)
+    assert not v.is_orthogonal_to(w)
+
+    v = Vector([-2.328, -7.284, -1.214])
+    w = Vector([-1.821, 1.072, -2.940])
+    assert not v.is_parallel_to(w)
+    assert v.is_orthogonal_to(w)
+
+    v = Vector([2.118, 4.827])
+    w = Vector([0.000, 0.000])
+    assert v.is_parallel_to(w)
+    assert v.is_orthogonal_to(w)
