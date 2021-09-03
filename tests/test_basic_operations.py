@@ -53,3 +53,46 @@ def test_normalize():
     with pytest.raises(ZeroDivisionError):
         zero_v = Vector([0.0, 0.0, 0.0])
         zero_v.normalize()
+
+
+def test_dot():
+    v = Vector([7.887, 4.138])
+    w = Vector([-8.802, 6.776])
+    assert math.isclose(v.dot(w), -41.382, rel_tol=1e-3)
+    v = Vector([-5.955, -4.904, -1.874])
+    w = Vector([-4.496, -8.755, 7.103])
+    assert math.isclose(v.dot(w), 56.397, rel_tol=1e-3)
+
+
+def test_angle():
+    v = Vector([3.183, -7.627])
+    w = Vector([-2.668, 5.319])
+    assert math.isclose(v.angle(w), 3.072, rel_tol=1e-3)
+    v = Vector([7.350, 0.221, 5.188])
+    w = Vector([2.751, 8.259, 3.985])
+    assert math.isclose(v.angle(w, in_degrees=True), 60.276, rel_tol=1e-3)
+    with pytest.raises(Exception):
+        zero_v = Vector([0.0, 0.0, 0.0])
+        v.angle(zero_v)
+
+
+def test_is_parallel_orthogonal():
+    v = Vector([-7.579, -7.880])
+    w = Vector([22.737, 23.640])
+    assert v.is_parallel_to(w)
+    assert not v.is_orthogonal_to(w)
+
+    v = Vector([-2.029, 9.970, 4.172])
+    w = Vector([-9.231, -6.639, -7.245])
+    assert not v.is_parallel_to(w)
+    assert not v.is_orthogonal_to(w)
+
+    v = Vector([-2.328, -7.284, -1.214])
+    w = Vector([-1.821, 1.072, -2.940])
+    assert not v.is_parallel_to(w)
+    assert v.is_orthogonal_to(w)
+
+    v = Vector([2.118, 4.827])
+    w = Vector([0.000, 0.000])
+    assert v.is_parallel_to(w)
+    assert v.is_orthogonal_to(w)

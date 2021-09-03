@@ -2,6 +2,9 @@ import math
 
 
 class Vector(object):
+
+    CANNOT_NORMALIZE_ZERO_VECTOR_MSG = "Cannot normalize the zero vector"
+
     def __init__(self, coordinates) -> None:
         try:
             if not coordinates:
@@ -46,4 +49,44 @@ class Vector(object):
             return self.times_scalar(1.0 / magnitude)
 
         except ZeroDivisionError:
-            raise ZeroDivisionError("Cannot normalize the zero vector")
+            raise ZeroDivisionError(self.CANNOT_NORMALIZE_ZERO_VECTOR_MSG)
+
+    def dot(self, o: object) -> float:
+        sum_coordinates = [x * y for x, y in zip(self.coordinates, o.coordinates)]
+        return sum(sum_coordinates)
+
+    def angle(self, o: object, in_degrees=False) -> float:
+        try:
+            v1 = self.normalize()
+            w1 = o.normalize()
+            # To avoid float decimal problems we need to manually trunc since round
+            # function changes the value and we loose precision.
+            dot = v1.dot(w1)
+            if dot > 1.000:
+                dot = 1.000
+            elif dot < -1.000:
+                dot = -1.000
+            angle = math.acos(dot)
+            if in_degrees:
+                angle = angle * (180.0 / math.pi)
+            return round(angle, 3)
+
+        except Exception as e:
+            if str(e) == self.CANNOT_NORMALIZE_ZERO_VECTOR_MSG:
+                raise Exception("Cannot compute an angle with the zero vector")
+            else:
+                raise e
+
+    def is_orthogonal_to(self, o: object, tolerance=1e-3) -> bool:
+        return abs(self.dot(o)) < tolerance
+
+    def is_parallel_to(self, o: object, tolerance=1e-3) -> bool:
+        return (
+            self.is_zero()
+            or o.is_zero()
+            or (math.isclose(self.angle(o), 0.0, rel_tol=tolerance))
+            or (math.isclose(self.angle(o), math.pi, rel_tol=tolerance))
+        )
+
+    def is_zero(self) -> bool:
+        return self.magnitude() == 0.0
